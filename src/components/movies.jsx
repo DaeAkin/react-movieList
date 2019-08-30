@@ -3,6 +3,7 @@ import { getMovies } from "../services/fakeMovieService";
 import Pagination from "./common/pagination";
 import Like from "./common/like";
 import { paginate } from "../utils/paginate";
+import Genre from "./common/genre";
 
 class Movies extends Component {
   state = {
@@ -39,6 +40,9 @@ class Movies extends Component {
     const movies = paginate(allMovies, currentPage, pageSize);
     return (
       <React.Fragment>
+        <div className="container">
+          <Genre />
+        </div>
         <p>현재 데이터베이스에 {count}개 있습니다.</p>
         <table className="table">
           <thead>
