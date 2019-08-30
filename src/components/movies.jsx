@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
-import { throwStatement } from "@babel/types";
+import Pagination from "./common/pagination";
 import Like from "./common/like";
+import { paginate } from "../utils/paginate";
 
 class Movies extends Component {
   state = {
-    movies: getMovies() // 옳바른 방법은 아님. 예제용
+    movies: getMovies(), // 옳바른 방법은 아님. 예제용
+    currentPage: 1,
+    pageSize: 4
   };
 
   handlDelete = movie => {
@@ -22,11 +25,18 @@ class Movies extends Component {
     this.setState({ movies });
   };
 
+  handlePageChange = page => {
+    this.setState({ currentPage: page });
+  };
+
   render() {
     // length를 잘 모르겟네...
     const { length: count } = this.state.movies;
+    const { pageSize, currentPage, movies: allMovies } = this.state;
 
     if (count === 0) return <p>There are no movies in the dateabase.</p>;
+
+    const movies = paginate(allMovies, currentPage, pageSize);
     return (
       <React.Fragment>
         <p>현재 데이터베이스에 {count}개 있습니다.</p>
@@ -41,7 +51,7 @@ class Movies extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.movies.map(movie => (
+            {movies.map(movie => (
               <tr key={movie._id}>
                 <td>{movie.title}</td>
                 <td>{movie.genre.name}</td>
@@ -59,6 +69,12 @@ class Movies extends Component {
             ))}
           </tbody>
         </table>
+        <Pagination
+          itemsCount={count}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={this.handlePageChange}
+        />
       </React.Fragment>
     );
   }
